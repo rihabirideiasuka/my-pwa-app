@@ -174,19 +174,10 @@ function downloadCSV() {
       row.steps,
       row.note,
       row.condition
-    ].map(cell => {
-      let value = cell || '';  // 空の場合は空文字に
-      if (typeof value === 'string') {
-        value = value.replace(/"/g, '""');
-        if (value.includes(',') || value.includes('\n')) {
-          value = `"${value}"`;
-        }
-      }
-      return value;
-    }).join(",");
+    ].join(",");  // 改行せずカンマ区切りで結合
   });
 
-  const csv = [header.join(","), ...rows].join("\n");
+  const csv = [header.join(","), ...rows].join("\n");  // 行ごとに改行
 
   const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
   const url = URL.createObjectURL(blob);
