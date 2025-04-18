@@ -157,10 +157,25 @@ function downloadCSV() {
   const data = getData();
   if (data.length === 0) return alert('データがありません');
 
-  const header = ["name", "date", "height", "weight", "rightGrip", "leftGrip", "rightLeg", "leftLeg", "tug1", "tug2", "time10m", "steps", "note", "condition"];
+  const header = ["氏名", "実施日", "身長", "体重", "右握力", "左握力", "右片足立ち", "左片足立ち", "TUG1回目", "TUG2回目", "10mタイム", "歩数", "備考", "歩行条件"];
   const rows = data.map(row => {
-    return header.map(key => {
-      let value = row[key] || '';
+    return [
+      row.name,
+      row.date,
+      row.height,
+      row.weight,
+      row.rightGrip,
+      row.leftGrip,
+      row.rightLeg,
+      row.leftLeg,
+      row.tug1,
+      row.tug2,
+      row.time10m,
+      row.steps,
+      row.note,
+      row.condition
+    ].map(cell => {
+      let value = cell || '';  // 空の場合は空文字に
       if (typeof value === 'string') {
         value = value.replace(/"/g, '""');
         if (value.includes(',') || value.includes('\n')) {
@@ -173,17 +188,18 @@ function downloadCSV() {
 
   const csv = [header.join(","), ...rows].join("\n");
 
-  const blob = new Blob([csv], { type: 'text/csv' });
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
   const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
+  const a = document.createElement("a");
   a.href = url;
   a.download = 'tairyoku_data.csv';
   a.click();
   URL.revokeObjectURL(url);
 }
 
-document.getElementById('recordForm').addEventListener('submit', function(e) {
+document.getElementById('recordForm').addEventListener('submit', (e) => {
   e.preventDefault();
+
   const formData = {
     name: document.getElementById('name').value,
     date: document.getElementById('date').value,
@@ -198,8 +214,9 @@ document.getElementById('recordForm').addEventListener('submit', function(e) {
     time10m: document.getElementById('time10m').value,
     steps: document.getElementById('steps').value,
     note: document.getElementById('note').value,
-    condition: document.getElementById('conditionOther').value || document.getElementById('condition').value,
+    condition: document.getElementById('condition').value || document.getElementById('conditionOther').value
   };
+
   const data = getData();
   data.push(formData);
   saveData(data);
