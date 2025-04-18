@@ -157,8 +157,20 @@ function downloadCSV() {
   const data = getData();
   if (data.length === 0) return alert('データがありません');
 
-  const header = Object.keys(data[0]);
-  const rows = data.map(row => header.map(k => JSON.stringify(row[k] || '')).join(","));
+  const header = ["name", "date", "height", "weight", "rightGrip", "leftGrip", "rightLeg", "leftLeg", "tug1", "tug2", "time10m", "steps", "note", "condition"];
+  const rows = data.map(row => {
+    return header.map(key => {
+      let value = row[key] || '';
+      if (typeof value === 'string') {
+        value = value.replace(/"/g, '""');
+        if (value.includes(',') || value.includes('\n')) {
+          value = `"${value}"`;
+        }
+      }
+      return value;
+    }).join(",");
+  });
+
   const csv = [header.join(","), ...rows].join("\n");
 
   const blob = new Blob([csv], { type: 'text/csv' });
@@ -191,26 +203,10 @@ document.getElementById('recordForm').addEventListener('submit', function(e) {
   const data = getData();
   data.push(formData);
   saveData(data);
-  this.reset();
+  document.getElementById('recordForm').reset();
 });
 
 showRecords();
 </script>
-
-<script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('sw.js')
-        .then(registration => {
-          console.log('Service Worker registered with scope: ', registration.scope);
-        })
-        .catch(error => {
-          console.log('Service Worker registration failed: ', error);
-        });
-    });
-  }
-</script>
-
-<script src="sw.js"></script>
 </body>
 </html>
