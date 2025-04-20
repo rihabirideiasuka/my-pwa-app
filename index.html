@@ -158,28 +158,28 @@ function downloadCSV() {
   if (data.length === 0) return alert('データがありません');
 
   const header = ["氏名", "実施日", "身長", "体重", "右握力", "左握力", "右片足立ち", "左片足立ち", "TUG1回目", "TUG2回目", "10mタイム", "歩数", "備考", "歩行条件"];
-  const rows = data.map(row => {
-    return [
-      row.name,
-      row.date,
-      row.height,
-      row.weight,
-      row.rightGrip,
-      row.leftGrip,
-      row.rightLeg,
-      row.leftLeg,
-      row.tug1,
-      row.tug2,
-      row.time10m,
-      row.steps,
-      row.note,
-      row.condition
-    ].join(",");  // 改行せずカンマ区切りで結合
-  });
+  const rows = data.map(row => [
+    row.name,
+    row.date,
+    row.height,
+    row.weight,
+    row.rightGrip,
+    row.leftGrip,
+    row.rightLeg,
+    row.leftLeg,
+    row.tug1,
+    row.tug2,
+    row.time10m,
+    row.steps,
+    row.note,
+    row.condition
+  ].join(","));
 
-  const csv = [header.join(","), ...rows].join("\n");  // 行ごとに改行
+  const csv = [header.join(","), ...rows].join("\n");
 
-  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+  const bom = new Uint8Array([0xEF, 0xBB, 0xBF]);  // BOMを追加
+  const blob = new Blob([bom, csv], { type: 'text/csv;charset=utf-8' });
+
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
