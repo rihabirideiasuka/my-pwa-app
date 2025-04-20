@@ -1,42 +1,23 @@
-const CACHE_NAME = 'tairyoku-cache-v1';
-const urlsToCache = [
-  './',
-  './index.html',
-  './manifest.json',
-  './icon-192.png',
-  './icon-512.png',
-  'https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css'
-];
 
-// インストール時にキャッシュする
-self.addEventListener('install', event => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => {
-      return cache.addAll(urlsToCache);
-    })
-  );
-});
-
-// リクエスト時にキャッシュを優先して返す
-self.addEventListener('fetch', event => {
-  event.respondWith(
-    caches.match(event.request).then(response => {
-      return response || fetch(event.request);
-    })
-  );
-});
-
-// 古いキャッシュを削除
-self.addEventListener('activate', event => {
-  event.waitUntil(
-    caches.keys().then(keys =>
-      Promise.all(
-        keys.map(key => {
-          if (key !== CACHE_NAME) {
-            return caches.delete(key);
-          }
-        })
-      )
-    )
-  );
-});
+{
+  "name": "体力測定記録アプリ",
+  "short_name": "体力測定",
+  "description": "利用者の体力測定記録を保存・管理するアプリ",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#4CAF50",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
