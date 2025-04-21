@@ -1,220 +1,190 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#4CAF50" />
-  <title>体力測定記録アプリ</title>
-  <link rel="manifest" href="manifest.json">
+  <meta charset="UTF-8">
+  <title>体力測定記録</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
-  <style>
-    body {
-      padding: 1rem;
-      background-color: #f5f5f5;
-    }
-    .container {
-      background: white;
-      padding: 2rem;
-      border-radius: 10px;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    }
-    .logo {
-      font-size: 1.5rem;
-      font-weight: bold;
-      color: #4CAF50;
-      margin-bottom: 1rem;
-    }
-    .record {
-      margin-top: 2rem;
-    }
-    textarea {
-      width: 100%;
-      height: 100px;
-    }
-  </style>
 </head>
 <body>
-<div class="container">
-  <div class="logo">体力測定記録アプリ</div>
+  <section class="section">
+    <div class="container">
+      <h1 class="title">体力測定記録フォーム</h1>
 
-  <form id="recordForm">
-    <div class="field is-horizontal">
-      <div class="field-body">
-        <div class="field">
-          <label class="label">氏名</label>
-          <div class="control">
-            <input class="input" type="text" id="name" required>
+      <div class="field">
+        <label class="label">氏名</label>
+        <div class="control">
+          <input class="input" type="text" id="name">
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="label">実施日</label>
+        <div class="control">
+          <input class="input" type="date" id="date">
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="label">身長 (cm)</label>
+        <div class="control">
+          <input class="input" type="number" id="height">
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="label">体重 (kg)</label>
+        <div class="control">
+          <input class="input" type="number" id="weight">
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="label">右握力 (kg)</label>
+        <div class="control">
+          <input class="input" type="number" id="rightGrip">
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="label">左握力 (kg)</label>
+        <div class="control">
+          <input class="input" type="number" id="leftGrip">
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="label">右片足立ち (秒)</label>
+        <div class="control">
+          <input class="input" type="number" id="rightLeg">
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="label">左片足立ち (秒)</label>
+        <div class="control">
+          <input class="input" type="number" id="leftLeg">
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="label">TUGテスト1回目 (秒)</label>
+        <div class="control">
+          <input class="input" type="number" id="tug1">
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="label">TUGテスト2回目 (秒)</label>
+        <div class="control">
+          <input class="input" type="number" id="tug2">
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="label">10m歩行 (秒)</label>
+        <div class="control">
+          <input class="input" type="number" id="time10m">
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="label">歩数</label>
+        <div class="control">
+          <input class="input" type="number" id="steps">
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="label">備考</label>
+        <div class="control">
+          <textarea class="textarea" id="note"></textarea>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="label">歩行条件</label>
+        <div class="control">
+          <div class="select">
+            <select id="condition">
+              <option value="">選択してください</option>
+              <option value="自立">自立</option>
+              <option value="杖">杖</option>
+              <option value="歩行器">歩行器</option>
+              <option value="介助あり">介助あり</option>
+              <option value="その他">その他（下に記入）</option>
+            </select>
           </div>
         </div>
-        <div class="field">
-          <label class="label">実施日</label>
-          <div class="control">
-            <input class="input" type="date" id="date" required>
-          </div>
+        <div class="control mt-2">
+          <input class="input" type="text" id="conditionOther" placeholder="その他の場合は記入">
         </div>
       </div>
-    </div>
 
-    <div class="field is-horizontal">
-      <div class="field-body">
-        <div class="field"><label class="label">身長</label><input class="input" type="number" step="0.1" id="height"></div>
-        <div class="field"><label class="label">体重</label><input class="input" type="number" step="0.1" id="weight"></div>
+      <div class="buttons mt-5">
+        <button class="button is-primary" onclick="saveRecord()">記録を保存</button>
+        <button class="button is-link" onclick="downloadCSV()">CSVダウンロード</button>
+        <button class="button is-warning" onclick="sendData()">データ送信</button>
       </div>
+
     </div>
+  </section>
 
-    <div class="field is-horizontal">
-      <div class="field-body">
-        <div class="field"><label class="label">右握力</label><input class="input" type="number" step="0.1" id="rightGrip"></div>
-        <div class="field"><label class="label">左握力</label><input class="input" type="number" step="0.1" id="leftGrip"></div>
-      </div>
-    </div>
+  <script>
+    function getFormData() {
+      return {
+        name: document.getElementById('name').value,
+        date: document.getElementById('date').value,
+        height: document.getElementById('height').value,
+        weight: document.getElementById('weight').value,
+        rightGrip: document.getElementById('rightGrip').value,
+        leftGrip: document.getElementById('leftGrip').value,
+        rightLeg: document.getElementById('rightLeg').value,
+        leftLeg: document.getElementById('leftLeg').value,
+        tug1: document.getElementById('tug1').value,
+        tug2: document.getElementById('tug2').value,
+        time10m: document.getElementById('time10m').value,
+        steps: document.getElementById('steps').value,
+        note: document.getElementById('note').value,
+        condition: document.getElementById('condition').value || document.getElementById('conditionOther').value
+      };
+    }
 
-    <div class="field is-horizontal">
-      <div class="field-body">
-        <div class="field"><label class="label">右片足立ち</label><input class="input" type="number" step="0.01" id="rightLeg"></div>
-        <div class="field"><label class="label">左片足立ち</label><input class="input" type="number" step="0.01" id="leftLeg"></div>
-      </div>
-    </div>
+    function saveRecord() {
+      const record = getFormData();
+      const records = JSON.parse(localStorage.getItem('records') || '[]');
+      records.push(record);
+      localStorage.setItem('records', JSON.stringify(records));
+      alert("記録を保存しました！");
+    }
 
-    <div class="field is-horizontal">
-      <div class="field-body">
-        <div class="field"><label class="label">TUG1回目</label><input class="input" type="number" step="0.01" id="tug1"></div>
-        <div class="field"><label class="label">TUG2回目</label><input class="input" type="number" step="0.01" id="tug2"></div>
-      </div>
-    </div>
+    function downloadCSV() {
+      const records = JSON.parse(localStorage.getItem('records') || '[]');
+      if (records.length === 0) return alert("記録がありません");
 
-    <div class="field"><label class="label">10mタイム</label><input class="input" type="number" step="0.01" id="time10m"></div>
-    <div class="field"><label class="label">歩数</label><input class="input" type="number" id="steps"></div>
-    <div class="field"><label class="label">備考</label><textarea id="note"></textarea></div>
+      const header = Object.keys(records[0]);
+      const csv = [header.join(",")].concat(
+        records.map(row => header.map(field => `"${row[field]}"`).join(","))
+      ).join("\n");
 
-    <div class="field">
-      <label class="label">歩行条件</label>
-      <div class="control">
-        <div class="select">
-          <select id="condition">
-            <option value="">選択してください</option>
-            <option>自立</option>
-            <option>自立T字杖</option>
-            <option>自立4点杖</option>
-            <option>自立歩行器</option>
-            <option>自立カート</option>
-            <option>歩行種目実施なし</option>
-          </select>
-        </div>
-        <input class="input mt-2" type="text" placeholder="その他を入力" id="conditionOther">
-      </div>
-    </div>
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = "体力測定記録.csv";
+      link.click();
+    }
 
-    <div class="field is-grouped mt-4">
-      <div class="control">
-        <button class="button is-success" type="submit">記録を保存</button>
-      </div>
-      <div class="control">
-        <button class="button is-info" type="button" onclick="downloadCSV()">CSVダウンロード</button>
-      </div>
-    </div>
-  </form>
+    function sendData() {
+      const record = getFormData();
 
-  <div class="record">
-    <h2 class="title is-5">保存済みデータ</h2>
-    <div id="recordList"></div>
-  </div>
-</div>
-
-<script>
-const STORAGE_KEY = 'tairyoku_data';
-
-function getData() {
-  return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-}
-
-function saveData(data) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-  showRecords();
-}
-
-function showRecords() {
-  const data = getData();
-  const recordList = document.getElementById('recordList');
-  recordList.innerHTML = '';
-  data.forEach((item, index) => {
-    const div = document.createElement('div');
-    div.className = 'box';
-    div.innerHTML = `<strong>${item.name}</strong> (${item.date})
-      <button class="button is-small is-danger is-pulled-right" onclick="deleteRecord(${index})">削除</button><br>
-      <small>${item.condition}</small>`;
-    recordList.appendChild(div);
-  });
-}
-
-function deleteRecord(index) {
-  const data = getData();
-  data.splice(index, 1);
-  saveData(data);
-}
-
-function downloadCSV() {
-  const data = getData();
-  if (data.length === 0) return alert('データがありません');
-
-  const header = ["氏名", "実施日", "身長", "体重", "右握力", "左握力", "右片足立ち", "左片足立ち", "TUG1回目", "TUG2回目", "10mタイム", "歩数", "備考", "歩行条件"];
-  const rows = data.map(row => [
-    row.name,
-    row.date,
-    row.height,
-    row.weight,
-    row.rightGrip,
-    row.leftGrip,
-    row.rightLeg,
-    row.leftLeg,
-    row.tug1,
-    row.tug2,
-    row.time10m,
-    row.steps,
-    row.note,
-    row.condition
-  ].join(","));
-
-  const csv = [header.join(","), ...rows].join("\n");
-
-  const bom = new Uint8Array([0xEF, 0xBB, 0xBF]);  // BOMを追加
-  const blob = new Blob([bom, csv], { type: 'text/csv;charset=utf-8' });
-
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = 'tairyoku_data.csv';
-  a.click();
-  URL.revokeObjectURL(url);
-}
-
-document.getElementById('recordForm').addEventListener('submit', (e) => {
-  e.preventDefault();
-
-  const formData = {
-    name: document.getElementById('name').value,
-    date: document.getElementById('date').value,
-    height: document.getElementById('height').value,
-    weight: document.getElementById('weight').value,
-    rightGrip: document.getElementById('rightGrip').value,
-    leftGrip: document.getElementById('leftGrip').value,
-    rightLeg: document.getElementById('rightLeg').value,
-    leftLeg: document.getElementById('leftLeg').value,
-    tug1: document.getElementById('tug1').value,
-    tug2: document.getElementById('tug2').value,
-    time10m: document.getElementById('time10m').value,
-    steps: document.getElementById('steps').value,
-    note: document.getElementById('note').value,
-    condition: document.getElementById('condition').value || document.getElementById('conditionOther').value
-  };
-
-  const data = getData();
-  data.push(formData);
-  saveData(data);
-  document.getElementById('recordForm').reset();
-});
-
-showRecords();
-</script>
+      fetch("https://script.google.com/macros/s/AKfycbyZYWoxj3AMpb90-0W7nNTXMMSX9LZ9RPs2MXf6IS_v_tCz_p_s3z3MDX3EQ8hMuBvc/exec", {
+        method: "POST",
+        body: JSON.stringify(record),
+        headers: { "Content-Type": "application/json" }
+      })
+      .then(response => response.text())
+      .then(data => alert("データ送信完了：" + data))
+      .catch(error => alert("エラーが発生しました：" + error));
+    }
+  </script>
 </body>
 </html>
