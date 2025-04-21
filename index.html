@@ -112,9 +112,6 @@
       <div class="control">
         <button class="button is-info" type="button" onclick="downloadCSV()">CSVダウンロード</button>
       </div>
-      <div class="control">
-        <button class="button is-primary" type="button" onclick="sendData()">データ送信</button>
-      </div>
     </div>
   </form>
 
@@ -190,51 +187,6 @@ function downloadCSV() {
   a.click();
   URL.revokeObjectURL(url);
 }
-
-function sendData() {
-  const formData = {
-    name: document.getElementById('name').value,
-    date: document.getElementById('date').value,
-    height: document.getElementById('height').value,
-    weight: document.getElementById('weight').value,
-    rightGrip: document.getElementById('rightGrip').value,
-    leftGrip: document.getElementById('leftGrip').value,
-    rightLeg: document.getElementById('rightLeg').value,
-    leftLeg: document.getElementById('leftLeg').value,
-    tug1: document.getElementById('tug1').value,
-    tug2: document.getElementById('tug2').value,
-    time10m: document.getElementById('time10m').value,
-    steps: document.getElementById('steps').value,
-    note: document.getElementById('note').value,
-    condition: document.getElementById('condition').value || document.getElementById('conditionOther').value
-  };
-
-fetch('https://script.google.com/macros/s/AKfycbxX9zd3cmgawuh7EmlU8JBDG8sdjrIUyr8QfrBcXPTU1yQPS0m71Jg6ZPptpBfGl_hP/exec', {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json"
-  },
-  body: JSON.stringify({
-    name: "テスト太郎",
-    date: "2025/04/20",
-    height: 170,
-    weight: 60,
-    rightGrip: 30,
-    leftGrip: 29,
-    rightLeg: 15,
-    leftLeg: 14,
-    tug1: 8.0,
-    tug2: 7.8,
-    time10m: 9.0,
-    steps: 44,
-    note: "特になし",
-    condition: "通常歩行"
-  })
-})
-.then(res => res.text())
-.then(data => console.log("✅成功:", data))
-.catch(err => console.error("❌送信エラー:", err));
-
 
 document.getElementById('recordForm').addEventListener('submit', (e) => {
   e.preventDefault();
