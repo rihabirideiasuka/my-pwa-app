@@ -33,7 +33,7 @@
 <body>
   <div class="container">
     <h4 class="center-align">体力測定記録フォーム</h4>
-    <form action="https://script.google.com/macros/s/AKfycbxDiVxtBOWzkk9IVZMbpoLwUE3OToxVLNhmfXmNaTucNSWHLHkJ61Nlau4iJM3L2mhJ/exec" method="POST" target="dummyFrame"> 
+    <form action="https://script.google.com/macros/s/AKfycbxZIqrLtGyy74CV5oYh0QA2FrtImfUrSZ-LYOanOQky2-PTl0aKTL0eeKWQJPqt4_Ma/exec" method="POST" target="dummyFrame"> 
 
       <div class="input-field"><input type="text" name="氏名" required><label>氏名</label></div>
       <div class="input-field"><input type="date" name="実施日" required><label class="active">実施日</label></div>
@@ -66,26 +66,14 @@
     document.addEventListener('DOMContentLoaded', function () {
       M.updateTextFields();
     });
-  
+
     const audio = document.getElementById("Audio");
     const btn = document.getElementById("submitBtn");
-    const form = document.querySelector('form');
-  
-    btn.addEventListener("click", function (event) {
-      event.preventDefault();  // 送信を一時的に停止
-  
+
+    btn.addEventListener("click", function () {
       audio.play();
       alert("Googleスプレッドシートに送信しました。");
-  
-      // フォームを送信する
-      form.submit(); 
-  
-      // 送信後にフォームをリセット
-      setTimeout(function() {
-        form.reset(); // フォームをリセット
-      }, 100);  // 少し遅延させることで送信が完了する前にリセットしないようにする
     });
   </script>
 </body>
 </html>
-<script>
