@@ -66,14 +66,26 @@
     document.addEventListener('DOMContentLoaded', function () {
       M.updateTextFields();
     });
-
+  
     const audio = document.getElementById("Audio");
     const btn = document.getElementById("submitBtn");
-
-    btn.addEventListener("click", function () {
+    const form = document.querySelector('form');
+  
+    btn.addEventListener("click", function (event) {
+      event.preventDefault();  // 送信を一時的に停止
+  
       audio.play();
       alert("Googleスプレッドシートに送信しました。");
+  
+      // フォームを送信する
+      form.submit(); 
+  
+      // 送信後にフォームをリセット
+      setTimeout(function() {
+        form.reset(); // フォームをリセット
+      }, 100);  // 少し遅延させることで送信が完了する前にリセットしないようにする
     });
   </script>
 </body>
 </html>
+<script>
