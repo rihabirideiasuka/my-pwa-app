@@ -53,7 +53,8 @@
       <div class="input-field"><input type="number" name="歩数"><label>歩数</label></div>
       <div class="input-field"><input type="text" name="備考"><label>備考</label></div>
       <div class="input-field">
-        <select name="歩行条件" required>
+        <label class="active" for="歩行条件">歩行条件</label>
+        <select name="歩行条件" id="歩行条件" required>
           <option value="" disabled selected>歩行条件を選択</option>
           <option value="自立">自立</option>
           <option value="自立T字杖">自立T字杖</option>
@@ -62,9 +63,7 @@
           <option value="自立カート">自立カート</option>
           <option value="歩行種目実施なし">歩行種目実施なし</option>
         </select>
-        <label>歩行条件</label>
       </div>
-
       <button id="submitBtn" class="btn waves-effect waves-light" type="submit">送信</button>
     </form>
 
