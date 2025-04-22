@@ -75,7 +75,9 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 <script>
   document.addEventListener('DOMContentLoaded', function () {
-    M.updateTextFields();
+    M.updateTextFields();  // テキストフィールドの更新
+    var elems = document.querySelectorAll('select');  // select要素を取得
+    M.FormSelect.init(elems);  // MaterializeのFormSelectを初期化
   });
 
   const audio = document.getElementById("Audio");
@@ -98,4 +100,3 @@
 
 </body>
 </html>
-<script>
