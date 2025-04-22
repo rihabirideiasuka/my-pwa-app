@@ -1,6 +1,6 @@
 
 {
-  "name": "体力測定記録アプリ",
+  "name": "体力測定記録",
   "short_name": "体力測定",
   "description": "利用者の体力測定記録を保存・管理するアプリ",
   "start_url": "./index.html",
