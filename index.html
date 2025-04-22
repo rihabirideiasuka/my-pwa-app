@@ -52,7 +52,18 @@
       <div class="input-field"><input type="number" name="10ｍ" step="0.01"><label>10ｍタイム（秒）</label></div>
       <div class="input-field"><input type="number" name="歩数"><label>歩数</label></div>
       <div class="input-field"><input type="text" name="備考"><label>備考</label></div>
-      <div class="input-field"><input type="text" name="歩行条件"><label>歩行条件</label></div>
+      <div class="input-field">
+        <select name="歩行条件" required>
+          <option value="" disabled selected>歩行条件を選択</option>
+          <option value="自立">自立</option>
+          <option value="自立T字杖">自立T字杖</option>
+          <option value="自立4点杖">自立4点杖</option>
+          <option value="自立歩行器">自立歩行器</option>
+          <option value="自立カート">自立カート</option>
+          <option value="歩行種目実施なし">歩行種目実施なし</option>
+        </select>
+        <label>歩行条件</label>
+      </div>
 
       <button id="submitBtn" class="btn waves-effect waves-light" type="submit">送信</button>
     </form>
