@@ -84,6 +84,14 @@
   const btn = document.getElementById("submitBtn");
   const form = document.querySelector('form');
 
+  // 歩行条件を選択したときにlabelを再描画
+  const selectElements = document.querySelectorAll('select');
+  selectElements.forEach(select => {
+    select.addEventListener('change', function () {
+      M.updateTextFields();  // labelを再描画
+    });
+  });
+
   btn.addEventListener("click", function (event) {
     event.preventDefault();  // デフォルトの送信を一旦停止
 
