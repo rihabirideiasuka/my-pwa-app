@@ -60,6 +60,15 @@
     .stopwatch-btn.active {
       color: red;
     }
+    @media (max-width: 600px) {
+      #timerDisplay {
+        font-size: 3rem !important;
+      }
+      #stopBtn {
+        font-size: 1.2rem !important;
+        padding: 0.8rem 1.5rem !important;
+      }
+    }
 
   </style>
 </head>
@@ -132,60 +141,90 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 
   <script>
+
     document.addEventListener('DOMContentLoaded', function () {
       M.updateTextFields();
       M.FormSelect.init(document.querySelectorAll('select'));
-    });
-
-    const audio = document.getElementById("Audio");
-    const btn = document.getElementById("submitBtn");
-    const form = document.querySelector('form');
-
-    const selectElements = document.querySelectorAll('select');
-    selectElements.forEach(select => {
-      select.addEventListener('change', function () {
-        M.updateTextFields();
-      });
-    });
-
-    btn.addEventListener("click", function (event) {
-      event.preventDefault();
-      audio.play();
-      alert("Googleスプレッドシートに送信しました。");
-
-      setTimeout(function () {
-        form.submit();
-        form.reset();
-      }, 500);
-    });
     
-    const stopwatchButtons = document.querySelectorAll('.stopwatch-btn');
+      const stopwatchButtons = document.querySelectorAll('.stopwatch-btn');
+      let currentInputField = null;
+      let modalTimerInterval = null;
+      let modalStartTime = null;
     
-    stopwatchButtons.forEach(btn => {
-      btn.addEventListener('click', function () {
-        const inputId = btn.dataset.target;
-        const inputField = document.getElementById(inputId);
+      const modal = document.getElementById("stopwatchModal");
+      const timerDisplay = document.getElementById("timerDisplay");
+      const stopBtn = document.getElementById("stopBtn");
     
-        if (!btn.classList.contains('active')) {
-          // スタート
-          btn.classList.add('active');
-          btn.textContent = '⏹️';
-          btn._startTime = Date.now();
+      stopwatchButtons.forEach(btn => {
+        btn.addEventListener("click", function () {
+          const inputId = btn.dataset.target;
+          currentInputField = document.getElementById(inputId);
     
-          btn._timer = setInterval(() => {
-            const elapsed = ((Date.now() - btn._startTime) / 1000).toFixed(2);
-            inputField.value = elapsed;
+          // タイマー初期化
+          modalStartTime = Date.now();
+          timerDisplay.textContent = "0.00";
+          modal.style.display = "flex";
+    
+          modalTimerInterval = setInterval(() => {
+            const elapsed = ((Date.now() - modalStartTime) / 1000).toFixed(2);
+            timerDisplay.textContent = elapsed;
           }, 100);
-        } else {
-          // ストップ
-          btn.classList.remove('active');
-          btn.textContent = '⏱️';
-          clearInterval(btn._timer);
-        }
+        });
+      });
+    
+      stopBtn.addEventListener("click", function () {
+        clearInterval(modalTimerInterval);
+        const finalTime = timerDisplay.textContent;
+        if (currentInputField) currentInputField.value = finalTime;
+        modal.style.display = "none";
+      });
+    
+      // 送信ボタン処理（ここもDOMLoaded内でOK）
+      const audio = document.getElementById("Audio");
+      const btn = document.getElementById("submitBtn");
+      const form = document.querySelector('form');
+    
+      btn.addEventListener("click", function (event) {
+        event.preventDefault();
+        audio.play();
+        alert("Googleスプレッドシートに送信しました。");
+    
+        setTimeout(function () {
+          form.submit();
+          form.reset();
+        }, 500);
       });
     });
 
+    
   </script>
+
+  <!-- ストップウォッチモーダル -->
+  <div id="stopwatchModal" style="
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.8);
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    color: #fff;
+    font-family: 'Noto Sans JP', sans-serif;
+  ">
+    <div id="timerDisplay" style="font-size: 4rem; margin-bottom: 30px;">0.00</div>
+    <button id="stopBtn" style="
+      font-size: 1.5rem;
+      padding: 1rem 2rem;
+      background: #ff5252;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    ">停止</button>
+  </div>
 
 </body>
 </html>
