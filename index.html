@@ -6,18 +6,14 @@
 
   <!-- Googleフォント -->
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP&display=swap" rel="stylesheet">
-
-  <!-- Materialize CSS -->
   <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
 
-  <!-- PWA関連 -->
+  <!-- PWA -->
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="icon-192.png">
   <meta name="theme-color" content="#4CAF50">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
-
-  <!-- レスポンシブ対応 -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
@@ -45,7 +41,6 @@
     .stopwatch-field {
       position: relative;
     }
-  
     .stopwatch-btn {
       position: absolute;
       right: 0.5rem;
@@ -56,36 +51,26 @@
       cursor: pointer;
       color: #4CAF50;
     }
-  
-    .stopwatch-btn.active {
-      color: red;
-    }
     #stopwatchModal {
-    display: none !important;
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.8);
-    z-index: 9999;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    color: #fff;
-    font-family: 'Noto Sans JP', sans-serif;
-  }
-
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.8);
+      z-index: 9999;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      color: #fff;
+      font-family: 'Noto Sans JP', sans-serif;
+    }
     @media (max-width: 600px) {
-      #timerDisplay {
-        font-size: 3rem !important;
-      }
+      #timerDisplay { font-size: 3rem !important; }
       #stopBtn {
         font-size: 1.2rem !important;
         padding: 0.8rem 1.5rem !important;
       }
     }
-
   </style>
 </head>
 <body>
@@ -101,30 +86,27 @@
       <div class="input-field"><input type="number" name="右握力" step="0.1"><label>右握力（kg）</label></div>
       <div class="input-field"><input type="number" name="左握力" step="0.1"><label>左握力（kg）</label></div>
 
+      <!-- ストップウォッチ対応項目 -->
       <div class="input-field stopwatch-field">
         <input type="number" name="右片足立ち" id="右片足立ち" step="0.01">
         <label for="右片足立ち">右片足立ち（秒）</label>
         <button class="stopwatch-btn" type="button" data-target="右片足立ち">⏱️</button>
       </div>
-      
       <div class="input-field stopwatch-field">
         <input type="number" name="左片足立ち" id="左片足立ち" step="0.01">
         <label for="左片足立ち">左片足立ち（秒）</label>
         <button class="stopwatch-btn" type="button" data-target="左片足立ち">⏱️</button>
       </div>
-      
       <div class="input-field stopwatch-field">
         <input type="number" name="TUG1回目" id="TUG1回目" step="0.01">
         <label for="TUG1回目">TUG1回目（秒）</label>
         <button class="stopwatch-btn" type="button" data-target="TUG1回目">⏱️</button>
       </div>
-      
       <div class="input-field stopwatch-field">
         <input type="number" name="TUG2回目" id="TUG2回目" step="0.01">
         <label for="TUG2回目">TUG2回目（秒）</label>
         <button class="stopwatch-btn" type="button" data-target="TUG2回目">⏱️</button>
       </div>
-      
       <div class="input-field stopwatch-field">
         <input type="number" name="10ｍ" id="10ｍ" step="0.01">
         <label for="10ｍ">10ｍタイム（秒）</label>
@@ -153,69 +135,7 @@
     <iframe name="dummyFrame" style="display:none;"></iframe>
   </div>
 
-  <!-- Materialize JS -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-
-  <script>
-
-    document.addEventListener('DOMContentLoaded', function () {
-      M.updateTextFields();
-      M.FormSelect.init(document.querySelectorAll('select'));
-    
-      const stopwatchButtons = document.querySelectorAll('.stopwatch-btn');
-      let currentInputField = null;
-      let modalTimerInterval = null;
-      let modalStartTime = null;
-    
-      const modal = document.getElementById("stopwatchModal");
-      const timerDisplay = document.getElementById("timerDisplay");
-      const stopBtn = document.getElementById("stopBtn");
-    
-      stopwatchButtons.forEach(btn => {
-        btn.addEventListener("click", function () {
-          const inputId = btn.dataset.target;
-          currentInputField = document.getElementById(inputId);
-    
-          // タイマー初期化
-          modalStartTime = Date.now();
-          timerDisplay.textContent = "0.00";
-          modal.style.display = "flex";
-    
-          modalTimerInterval = setInterval(() => {
-            const elapsed = ((Date.now() - modalStartTime) / 1000).toFixed(2);
-            timerDisplay.textContent = elapsed;
-          }, 100);
-        });
-      });
-    
-      stopBtn.addEventListener("click", function () {
-        clearInterval(modalTimerInterval);
-        const finalTime = timerDisplay.textContent;
-        if (currentInputField) currentInputField.value = finalTime;
-        modal.style.display = "none";
-      });
-    
-      // 送信ボタン処理（ここもDOMLoaded内でOK）
-      const audio = document.getElementById("Audio");
-      const btn = document.getElementById("submitBtn");
-      const form = document.querySelector('form');
-    
-      btn.addEventListener("click", function (event) {
-        event.preventDefault();
-        audio.play();
-        alert("Googleスプレッドシートに送信しました。");
-    
-        setTimeout(function () {
-          form.submit();
-          form.reset();
-        }, 500);
-      });
-    });
-
-    
-  </script>
-
-  <!-- ストップウォッチモーダル -->
+  <!-- モーダル -->
   <div id="stopwatchModal">
     <div id="timerDisplay" style="font-size: 4rem; margin-bottom: 30px;">0.00</div>
     <button id="stopBtn" style="
@@ -229,6 +149,58 @@
     ">停止</button>
   </div>
 
+  <!-- JS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      M.updateTextFields();
+      M.FormSelect.init(document.querySelectorAll('select'));
 
+      const stopwatchButtons = document.querySelectorAll('.stopwatch-btn');
+      const modal = document.getElementById("stopwatchModal");
+      const timerDisplay = document.getElementById("timerDisplay");
+      const stopBtn = document.getElementById("stopBtn");
+      let currentInputField = null;
+      let modalStartTime = null;
+      let modalTimerInterval = null;
+
+      stopwatchButtons.forEach(btn => {
+        btn.addEventListener("click", () => {
+          if (modal.style.display === "flex") return; // 連打防止
+          const inputId = btn.dataset.target;
+          currentInputField = document.getElementById(inputId);
+          modalStartTime = Date.now();
+          timerDisplay.textContent = "0.00";
+          modal.style.display = "flex";
+
+          modalTimerInterval = setInterval(() => {
+            const elapsed = ((Date.now() - modalStartTime) / 1000).toFixed(2);
+            timerDisplay.textContent = elapsed;
+          }, 100);
+        });
+      });
+
+      stopBtn.addEventListener("click", () => {
+        clearInterval(modalTimerInterval);
+        if (currentInputField) {
+          currentInputField.value = timerDisplay.textContent;
+        }
+        modal.style.display = "none";
+      });
+
+      const audio = document.getElementById("Audio");
+      const form = document.querySelector('form');
+      const btn = document.getElementById("submitBtn");
+      btn.addEventListener("click", function (event) {
+        event.preventDefault();
+        audio.play();
+        alert("Googleスプレッドシートに送信しました。");
+        setTimeout(() => {
+          form.submit();
+          form.reset();
+        }, 500);
+      });
+    });
+  </script>
 </body>
 </html>
