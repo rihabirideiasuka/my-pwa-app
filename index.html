@@ -65,11 +65,21 @@
       font-family: 'Noto Sans JP', sans-serif;
     }
     @media (max-width: 600px) {
-      #timerDisplay { font-size: 3rem !important; }
-      #stopBtn {
-        font-size: 1.2rem !important;
-        padding: 0.8rem 1.5rem !important;
+      #timerDisplay {
+        font-size: 6rem; /* ✅ 大きく変更 */
+        margin-bottom: 40px;
       }
+      #stopBtn {
+        font-size: 2rem;
+        padding: 1.5rem 3rem;
+        background: #ff5252;
+        color: white;
+        border: none;
+        border-radius: 12px;
+        cursor: pointer;
+        font-weight: bold;
+      }
+
     }
   </style>
 </head>
