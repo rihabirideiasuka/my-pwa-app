@@ -60,6 +60,22 @@
     .stopwatch-btn.active {
       color: red;
     }
+    #stopwatchModal {
+    display: none !important;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.8);
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    color: #fff;
+    font-family: 'Noto Sans JP', sans-serif;
+  }
+
     @media (max-width: 600px) {
       #timerDisplay {
         font-size: 3rem !important;
@@ -200,20 +216,7 @@
   </script>
 
   <!-- ストップウォッチモーダル -->
-  <div id="stopwatchModal" style="
-    display: none;
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background: rgba(0,0,0,0.8);
-    z-index: 9999;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    color: #fff;
-    font-family: 'Noto Sans JP', sans-serif;
-  ">
+  <div id="stopwatchModal">
     <div id="timerDisplay" style="font-size: 4rem; margin-bottom: 30px;">0.00</div>
     <button id="stopBtn" style="
       font-size: 1.5rem;
@@ -225,6 +228,7 @@
       cursor: pointer;
     ">停止</button>
   </div>
+
 
 </body>
 </html>
