@@ -42,6 +42,25 @@
     .btn {
       width: 100%;
     }
+    .stopwatch-field {
+      position: relative;
+    }
+  
+    .stopwatch-btn {
+      position: absolute;
+      right: 0.5rem;
+      top: 0.8rem;
+      font-size: 1.4rem;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      color: #4CAF50;
+    }
+  
+    .stopwatch-btn.active {
+      color: red;
+    }
+
   </style>
 </head>
 <body>
@@ -121,5 +140,36 @@
       }, 500);
     });
   </script>
+  <script>
+    const stopwatchButtons = document.querySelectorAll('.stopwatch-btn');
+  
+    stopwatchButtons.forEach(btn => {
+      let startTime = null;
+      let timerInterval = null;
+  
+      btn.addEventListener('click', function () {
+        const inputId = btn.dataset.target;
+        const inputField = document.getElementById(inputId);
+  
+        if (!btn.classList.contains('active')) {
+          // スタート
+          btn.classList.add('active');
+          btn.textContent = '⏹️'; // 停止マークに変更
+          startTime = Date.now();
+  
+          timerInterval = setInterval(() => {
+            const elapsed = ((Date.now() - startTime) / 1000).toFixed(2);
+            inputField.value = elapsed;
+          }, 100);
+        } else {
+          // ストップ
+          btn.classList.remove('active');
+          btn.textContent = '⏱️';
+          clearInterval(timerInterval);
+        }
+      });
+    });
+  </script>
+
 </body>
 </html>
