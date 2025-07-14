@@ -57,7 +57,11 @@
       <div class="input-field"><input type="number" name="右握力" step="0.1"><label>右握力（kg）</label></div>
       <div class="input-field"><input type="number" name="左握力" step="0.1"><label>左握力（kg）</label></div>
 
-      <div class="input-field"><input type="number" name="右片足立ち" step="0.01"><label>右片足立ち（秒）</label></div>
+      <div class="input-field stopwatch-field">
+      <input type="number" name="右片足立ち" step="0.01" id="右片足立ち"><label for="右片足立ち">右片足立ち（秒）</label>
+      <button class="stopwatch-btn" type="button" data-target="右片足立ち">⏱️</button>
+      </div>
+
       <div class="input-field"><input type="number" name="左片足立ち" step="0.01"><label>左片足立ち（秒）</label></div>
 
       <div class="input-field"><input type="number" name="TUG1回目" step="0.01"><label>TUG1回目（秒）</label></div>
