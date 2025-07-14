@@ -77,16 +77,35 @@
       <div class="input-field"><input type="number" name="左握力" step="0.1"><label>左握力（kg）</label></div>
 
       <div class="input-field stopwatch-field">
-      <input type="number" name="右片足立ち" step="0.01" id="右片足立ち"><label for="右片足立ち">右片足立ち（秒）</label>
-      <button class="stopwatch-btn" type="button" data-target="右片足立ち">⏱️</button>
+        <input type="number" name="右片足立ち" id="右片足立ち" step="0.01">
+        <label for="右片足立ち">右片足立ち（秒）</label>
+        <button class="stopwatch-btn" type="button" data-target="右片足立ち">⏱️</button>
+      </div>
+      
+      <div class="input-field stopwatch-field">
+        <input type="number" name="左片足立ち" id="左片足立ち" step="0.01">
+        <label for="左片足立ち">左片足立ち（秒）</label>
+        <button class="stopwatch-btn" type="button" data-target="左片足立ち">⏱️</button>
+      </div>
+      
+      <div class="input-field stopwatch-field">
+        <input type="number" name="TUG1回目" id="TUG1回目" step="0.01">
+        <label for="TUG1回目">TUG1回目（秒）</label>
+        <button class="stopwatch-btn" type="button" data-target="TUG1回目">⏱️</button>
+      </div>
+      
+      <div class="input-field stopwatch-field">
+        <input type="number" name="TUG2回目" id="TUG2回目" step="0.01">
+        <label for="TUG2回目">TUG2回目（秒）</label>
+        <button class="stopwatch-btn" type="button" data-target="TUG2回目">⏱️</button>
+      </div>
+      
+      <div class="input-field stopwatch-field">
+        <input type="number" name="10ｍ" id="10ｍ" step="0.01">
+        <label for="10ｍ">10ｍタイム（秒）</label>
+        <button class="stopwatch-btn" type="button" data-target="10ｍ">⏱️</button>
       </div>
 
-      <div class="input-field"><input type="number" name="左片足立ち" step="0.01"><label>左片足立ち（秒）</label></div>
-
-      <div class="input-field"><input type="number" name="TUG1回目" step="0.01"><label>TUG1回目（秒）</label></div>
-      <div class="input-field"><input type="number" name="TUG2回目" step="0.01"><label>TUG2回目（秒）</label></div>
-
-      <div class="input-field"><input type="number" name="10ｍ" step="0.01"><label>10ｍタイム（秒）</label></div>
       <div class="input-field"><input type="number" name="歩数"><label>歩数</label></div>
       <div class="input-field"><input type="text" name="備考"><label>備考</label></div>
 
@@ -141,33 +160,31 @@
     });
     
     const stopwatchButtons = document.querySelectorAll('.stopwatch-btn');
-  
+    
     stopwatchButtons.forEach(btn => {
-      let startTime = null;
-      let timerInterval = null;
-  
       btn.addEventListener('click', function () {
         const inputId = btn.dataset.target;
         const inputField = document.getElementById(inputId);
-  
+    
         if (!btn.classList.contains('active')) {
           // スタート
           btn.classList.add('active');
-          btn.textContent = '⏹️'; // 停止マークに変更
-          startTime = Date.now();
-  
-          timerInterval = setInterval(() => {
-            const elapsed = ((Date.now() - startTime) / 1000).toFixed(2);
+          btn.textContent = '⏹️';
+          btn._startTime = Date.now();
+    
+          btn._timer = setInterval(() => {
+            const elapsed = ((Date.now() - btn._startTime) / 1000).toFixed(2);
             inputField.value = elapsed;
           }, 100);
         } else {
           // ストップ
           btn.classList.remove('active');
           btn.textContent = '⏱️';
-          clearInterval(timerInterval);
+          clearInterval(btn._timer);
         }
       });
     });
+
   </script>
 
 </body>
