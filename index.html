@@ -220,10 +220,18 @@
       stopBtn.addEventListener("click", () => {
         clearInterval(modalTimerInterval);
         if (currentInputField) {
-          currentInputField.value = timerDisplay.textContent;
+          const elapsed = parseFloat(timerDisplay.textContent);
+          
+          // 限定：右片足立ち または 左片足立ちの場合のみ最大60秒に制限
+          if (currentInputField.id === "右片足立ち" || currentInputField.id === "左片足立ち") {
+            currentInputField.value = Math.min(elapsed, 60.00).toFixed(2);
+          } else {
+            currentInputField.value = elapsed.toFixed(2);
+          }
         }
         modal.style.display = "none";
       });
+
 
       const audio = document.getElementById("Audio");
       const form = document.querySelector('form');
