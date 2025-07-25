@@ -196,43 +196,54 @@
       const stopwatchButtons = document.querySelectorAll('.stopwatch-btn');
       const modal = document.getElementById("stopwatchModal");
       const timerDisplay = document.getElementById("timerDisplay");
-      const stopBtn = document.getElementById("stopBtn");
+      const controlBtn = document.getElementById("stopBtn"); // 名前変更：stop→control
       let currentInputField = null;
       let modalStartTime = null;
       let modalTimerInterval = null;
+      let running = false;
 
       stopwatchButtons.forEach(btn => {
         btn.addEventListener("click", () => {
-          if (modal.style.display === "flex") return; // 連打防止
+          if (modal.style.display === "flex") return;
           const inputId = btn.dataset.target;
           currentInputField = document.getElementById(inputId);
-          modalStartTime = Date.now();
           timerDisplay.textContent = "0.00";
-          modal.style.display = "flex";
+          controlBtn.textContent = "スタート";
+          controlBtn.style.background = "#4CAF50";
+          controlBtn.disabled = false;
+          running = false;
 
+          modal.style.display = "flex";
+        });
+      });
+
+      controlBtn.addEventListener("click", () => {
+        if (!running) {
+          // ▶️ スタート
+          modalStartTime = Date.now();
+          running = true;
+          controlBtn.textContent = "ストップ";
+          controlBtn.style.background = "#ff3b3b";
           modalTimerInterval = setInterval(() => {
             const elapsed = ((Date.now() - modalStartTime) / 1000).toFixed(2);
             timerDisplay.textContent = elapsed;
           }, 100);
-        });
-      });
+        } else {
+          // ⏹️ ストップ
+          clearInterval(modalTimerInterval);
+          running = false;
 
-      stopBtn.addEventListener("click", () => {
-        clearInterval(modalTimerInterval);
-        if (currentInputField) {
           const elapsed = parseFloat(timerDisplay.textContent);
-          
-          // 限定：右片足立ち または 左片足立ちの場合のみ最大60秒に制限
-          if (currentInputField.id === "右片足立ち" || currentInputField.id === "左片足立ち") {
-            currentInputField.value = Math.min(elapsed, 60.00).toFixed(2);
-          } else {
-            currentInputField.value = elapsed.toFixed(2);
+          if (currentInputField) {
+            const is片足 = currentInputField.id === "右片足立ち" || currentInputField.id === "左片足立ち";
+            currentInputField.value = is片足 ? Math.min(elapsed, 60.00).toFixed(2) : elapsed.toFixed(2);
           }
+
+          modal.style.display = "none";
         }
-        modal.style.display = "none";
       });
 
-
+      // 送信処理（音あり）
       const audio = document.getElementById("Audio");
       const form = document.querySelector('form');
       const btn = document.getElementById("submitBtn");
@@ -247,5 +258,6 @@
       });
     });
   </script>
+
 </body>
 </html>
