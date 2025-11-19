@@ -233,13 +233,14 @@
           // ⏹️ ストップ
           clearInterval(modalTimerInterval);
           running = false;
-
-          const elapsed = parseFloat(timerDisplay.textContent);
+        
+          const elapsed = (Date.now() - modalStartTime) / 1000;  // ← 再計算
           if (currentInputField) {
             const is片足 = currentInputField.id === "右片足立ち" || currentInputField.id === "左片足立ち";
-            currentInputField.value = is片足 ? Math.min(elapsed, 60.00).toFixed(2) : elapsed.toFixed(2);
+            const value = is片足 ? Math.min(elapsed, 60.0) : elapsed;
+            currentInputField.value = value.toFixed(2);
           }
-
+        
           modal.style.display = "none";
         }
       });
@@ -282,4 +283,5 @@
 
 </body>
 </html>
+
 
