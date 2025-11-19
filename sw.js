@@ -19,12 +19,18 @@ self.addEventListener('install', event => {
 
 // リクエスト時にキャッシュを優先して返す
 self.addEventListener('fetch', event => {
+  // フォーム送信などの非GETリクエストはそのままネットへ
+  if (event.request.method !== 'GET') {
+    return;
+  }
+
   event.respondWith(
     caches.match(event.request).then(response => {
       return response || fetch(event.request);
     })
   );
 });
+
 
 // 古いキャッシュを削除
 self.addEventListener('activate', event => {
