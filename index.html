@@ -244,21 +244,42 @@
         }
       });
 
-      // 送信処理（音あり）
+      // 送信処理（音あり・確実な送信）
       const audio = document.getElementById("Audio");
-      const form = document.querySelector('form');
-      const btn = document.getElementById("submitBtn");
-      btn.addEventListener("click", function (event) {
-        event.preventDefault();
-        audio.play();
-        alert("Googleスプレッドシートに送信しました。");
-        setTimeout(() => {
-          form.submit();
-          form.reset();
-        }, 500);
+      const form  = document.querySelector('form');
+      const btn   = document.getElementById("submitBtn");
+      const dummyFrame = document.querySelector('iframe[name="dummyFrame"]');
+
+      // フォーム送信時に動く
+      form.addEventListener("submit", function (event) {
+        // オフラインなら送信させない
+        if (!navigator.onLine) {
+          event.preventDefault();
+          alert("インターネットに接続されていないため送信できません。Wi-Fi等を確認してください。");
+          return;
+        }
+
+        // ここでは preventDefault しないので、
+        // HTML標準の required チェックが効いたあとに送信される
+        btn.disabled = true;
+        audio.currentTime = 0;
+        audio.play().catch(() => {});
       });
+
+      // hidden iframe にレスポンスが返ってきたら「送信完了」とみなす
+      dummyFrame.addEventListener("load", function () {
+        form.reset();
+        // Materialize のレイアウトを再適用
+        M.updateTextFields();
+        M.FormSelect.init(document.querySelectorAll('select'));
+
+        btn.disabled = false;
+        alert("Googleスプレッドシートに送信しました。");
+      });
+
     });
   </script>
 
 </body>
 </html>
+
