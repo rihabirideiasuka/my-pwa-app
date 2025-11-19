@@ -1,4 +1,4 @@
-const CACHE_NAME = 'tairyoku-cache-v1';
+const CACHE_NAME = 'tairyoku-cache-v2';
 const urlsToCache = [
   './',
   './index.html',
