@@ -31,23 +31,20 @@
     }
     h4 {
       margin-bottom: 30px;
-      font-size: 2.4rem; /* タイトルも少し大きく */
+      font-size: 2.4rem;
     }
     .input-field label {
-      font-size: 1.2rem; /* もともと0.9remを大きく */
+      font-size: 1.2rem;
     }
     input[type="text"],
     input[type="number"],
     input[type="date"],
     select {
-      font-size: 1.3rem; /* 入力欄の文字サイズを拡大 */
+      font-size: 1.3rem;
     }
     .btn {
       width: 100%;
-      font-size: 1.3rem; /* ボタンの文字サイズも大きく */
-    }  
-    .btn {
-      width: 100%;
+      font-size: 1.3rem;
     }
     .stopwatch-field {
       position: relative;
@@ -56,7 +53,7 @@
       position: absolute;
       right: 0.5rem;
       top: 0.8rem;
-      font-size: 1.8rem; /* 1.4rem → 1.8remに拡大 */
+      font-size: 1.8rem;
       border: none;
       background: transparent;
       cursor: pointer;
@@ -75,14 +72,14 @@
       color: #fff;
       font-family: 'Noto Sans JP', sans-serif;
     }
-    
+
     #timerDisplay {
       font-size: 10rem;
       font-weight: bold;
       margin-bottom: 60px;
       text-shadow: 2px 2px 6px rgba(0,0,0,0.4);
     }
-    
+
     #stopBtn {
       font-size: 4rem;
       padding: 2rem 4rem;
@@ -99,7 +96,7 @@
     #stopBtn:hover {
       background: #ff0000;
     }
-    
+
     @media (max-width: 600px) {
       #timerDisplay {
         font-size: 6rem !important;
@@ -114,7 +111,7 @@
 <body>
   <div class="container">
     <h4 class="center-align">体力測定記録</h4>
-    <form action="https://script.google.com/macros/s/AKfycbyZytDNoxPXsTQwljmkrmm13owNdGGqBwwvOmmsUMuI5jcGRQex7BDcnMBI_UAuyCcl/exec" method="POST" target="dummyFrame"> 
+    <form action="https://script.google.com/macros/s/AKfycbyZytDNoxPXsTQwljmkrmm13owNdGGqBwwvOmmsUMuI5jcGRQex7BDcnMBI_UAuyCcl/exec" method="POST" target="dummyFrame">
 
       <div class="input-field"><input type="text" name="氏名" required><label>氏名</label></div>
       <div class="input-field"><input type="date" name="実施日" required><label class="active">実施日</label></div>
@@ -154,6 +151,7 @@
       <div class="input-field"><input type="number" name="歩数"><label>歩数</label></div>
       <div class="input-field"><input type="text" name="備考"><label>備考</label></div>
 
+      <!-- ★ 歩行条件：その他追加 -->
       <div class="input-field" style="margin-top: 20px;">
         <select name="歩行条件" id="歩行条件" required class="browser-default">
           <option value="" disabled selected>歩行条件を選択</option>
@@ -163,7 +161,14 @@
           <option value="自立歩行器">自立歩行器</option>
           <option value="自立カート">自立カート</option>
           <option value="歩行種目実施なし">歩行種目実施なし</option>
+          <option value="その他">その他（手入力）</option>
         </select>
+      </div>
+
+      <!-- ★ その他入力（送信は歩行条件に上書きするので name は付けない） -->
+      <div class="input-field" id="walkOtherWrap" style="display:none; margin-top: 10px;">
+        <input type="text" id="walkOther" placeholder="例：見守り、四輪歩行器、介助あり など">
+        <label for="walkOther">歩行条件（その他）</label>
       </div>
 
       <button id="submitBtn" class="btn waves-effect waves-light" type="submit">送信</button>
@@ -197,7 +202,7 @@
       const stopwatchButtons = document.querySelectorAll('.stopwatch-btn');
       const modal = document.getElementById("stopwatchModal");
       const timerDisplay = document.getElementById("timerDisplay");
-      const controlBtn = document.getElementById("stopBtn"); // 名前変更：stop→control
+      const controlBtn = document.getElementById("stopBtn");
       let currentInputField = null;
       let modalStartTime = null;
       let modalTimerInterval = null;
@@ -220,7 +225,6 @@
 
       controlBtn.addEventListener("click", () => {
         if (!running) {
-          // ▶️ スタート
           modalStartTime = Date.now();
           running = true;
           controlBtn.textContent = "ストップ";
@@ -230,20 +234,37 @@
             timerDisplay.textContent = elapsed;
           }, 100);
         } else {
-          // ⏹️ ストップ
           clearInterval(modalTimerInterval);
           running = false;
-        
-          const elapsed = (Date.now() - modalStartTime) / 1000;  // ← 再計算
+
+          const elapsed = (Date.now() - modalStartTime) / 1000;
           if (currentInputField) {
             const is片足 = currentInputField.id === "右片足立ち" || currentInputField.id === "左片足立ち";
             const value = is片足 ? Math.min(elapsed, 60.0) : elapsed;
             currentInputField.value = value.toFixed(2);
           }
-        
+
           modal.style.display = "none";
         }
       });
+
+      // ===== ★歩行条件：その他入力の表示制御 + 送信時に上書き =====
+      const walkSelect = document.getElementById("歩行条件");
+      const walkOtherWrap = document.getElementById("walkOtherWrap");
+      const walkOtherInput = document.getElementById("walkOther");
+
+      function updateWalkOtherVisibility() {
+        const isOther = walkSelect.value === "その他";
+        walkOtherWrap.style.display = isOther ? "block" : "none";
+        if (!isOther) {
+          walkOtherInput.value = "";
+        } else {
+          setTimeout(() => walkOtherInput.focus(), 0);
+        }
+        M.updateTextFields();
+      }
+      walkSelect.addEventListener("change", updateWalkOtherVisibility);
+      updateWalkOtherVisibility();
 
       // 送信処理（音あり・確実な送信）
       const audio = document.getElementById("Audio");
@@ -251,7 +272,6 @@
       const btn   = document.getElementById("submitBtn");
       const dummyFrame = document.querySelector('iframe[name="dummyFrame"]');
 
-      // フォーム送信時に動く
       form.addEventListener("submit", function (event) {
         // オフラインなら送信させない
         if (!navigator.onLine) {
@@ -260,8 +280,29 @@
           return;
         }
 
-        // ここでは preventDefault しないので、
-        // HTML標準の required チェックが効いたあとに送信される
+        // ★ その他なら、入力必須＆「歩行条件」自体を入力値に差し替えて送信
+        if (walkSelect.value === "その他") {
+          const other = walkOtherInput.value.trim();
+          if (!other) {
+            event.preventDefault();
+            alert("歩行条件で「その他」を選んだ場合は、内容を入力してください。");
+            walkOtherInput.focus();
+            return;
+          }
+
+          // 送信時だけ一時オプションとして差し替える（スプレッドシート列は増やさない）
+          let tempOpt = walkSelect.querySelector('option[data-temp="1"]');
+          if (!tempOpt) {
+            tempOpt = document.createElement("option");
+            tempOpt.dataset.temp = "1";
+            walkSelect.appendChild(tempOpt);
+          }
+          tempOpt.value = other;
+          tempOpt.textContent = other;
+          walkSelect.value = other;
+        }
+
+        // required チェックのあとに送信される（preventDefaultしない）
         btn.disabled = true;
         audio.currentTime = 0;
         audio.play().catch(() => {});
@@ -270,6 +311,14 @@
       // hidden iframe にレスポンスが返ってきたら「送信完了」とみなす
       dummyFrame.addEventListener("load", function () {
         form.reset();
+
+        // ★ 一時オプション除去（次回入力の邪魔をしない）
+        const tempOpt = walkSelect.querySelector('option[data-temp="1"]');
+        if (tempOpt) tempOpt.remove();
+
+        walkOtherInput.value = "";
+        walkOtherWrap.style.display = "none";
+
         // Materialize のレイアウトを再適用
         M.updateTextFields();
         M.FormSelect.init(document.querySelectorAll('select'));
@@ -283,5 +332,3 @@
 
 </body>
 </html>
-
-
