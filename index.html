@@ -17,131 +17,63 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
-    body {
-      font-family: 'Noto Sans JP', sans-serif;
-      background-color: #f5f5f5;
-    }
+    body { font-family: 'Noto Sans JP', sans-serif; background-color: #f5f5f5; }
     .container {
-      max-width: 600px;
-      margin-top: 40px;
-      padding: 30px;
-      background: #fff;
-      border-radius: 12px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      max-width: 600px; margin-top: 40px; padding: 30px; background: #fff;
+      border-radius: 12px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     }
-    h4 {
-      margin-bottom: 30px;
-      font-size: 2.4rem;
-    }
-    .input-field label {
-      font-size: 1.2rem;
-    }
-    input[type="text"],
-    input[type="number"],
-    input[type="date"],
-    select {
-      font-size: 1.3rem;
-    }
-    .btn {
-      width: 100%;
-      font-size: 1.3rem;
-    }
-    .stopwatch-field {
-      position: relative;
-    }
+    h4 { margin-bottom: 30px; font-size: 2.4rem; }
+    .input-field label { font-size: 1.2rem; }
+    input[type="text"], input[type="number"], input[type="date"], select { font-size: 1.3rem; }
+    .btn { width: 100%; font-size: 1.3rem; }
+
+    .stopwatch-field { position: relative; }
     .stopwatch-btn {
-      position: absolute;
-      right: 0.5rem;
-      top: 0.8rem;
-      font-size: 1.8rem;
-      border: none;
-      background: transparent;
-      cursor: pointer;
-      color: #4CAF50;
+      position: absolute; right: 0.5rem; top: 0.8rem;
+      font-size: 1.8rem; border: none; background: transparent; cursor: pointer; color: #4CAF50;
     }
 
-    /* ストップウォッチモーダル */
     #stopwatchModal {
-      display: none;
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0, 0, 0, 0.9);
-      z-index: 9999;
-      justify-content: center;
-      align-items: center;
-      flex-direction: column;
-      color: #fff;
-      font-family: 'Noto Sans JP', sans-serif;
+      display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.9); z-index: 9999;
+      justify-content: center; align-items: center; flex-direction: column;
+      color: #fff; font-family: 'Noto Sans JP', sans-serif;
     }
     #timerDisplay {
-      font-size: 10rem;
-      font-weight: bold;
-      margin-bottom: 60px;
+      font-size: 10rem; font-weight: bold; margin-bottom: 60px;
       text-shadow: 2px 2px 6px rgba(0,0,0,0.4);
     }
     #stopBtn {
-      font-size: 4rem;
-      padding: 2rem 4rem;
-      background: #4CAF50;
-      color: white;
-      border: none;
-      border-radius: 16px;
-      cursor: pointer;
-      font-weight: bold;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.4);
-      transition: background 0.3s;
+      font-size: 4rem; padding: 2rem 4rem; background: #4CAF50; color: white;
+      border: none; border-radius: 16px; cursor: pointer; font-weight: bold;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.4); transition: background 0.3s;
     }
     #stopBtn:hover { background: #ff0000; }
 
     @media (max-width: 600px) {
       #timerDisplay { font-size: 6rem !important; }
-      #stopBtn {
-        font-size: 2.5rem !important;
-        padding: 1.5rem 2.5rem !important;
-      }
+      #stopBtn { font-size: 2.5rem !important; padding: 1.5rem 2.5rem !important; }
     }
 
     /* 送信中オーバーレイ */
     #sendOverlay{
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.78);
-      z-index: 10000;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 24px;
+      position: fixed; inset: 0; background: rgba(0,0,0,0.78);
+      z-index: 10000; display: none; align-items: center; justify-content: center; padding: 24px;
     }
     #sendOverlay .sendBox{
       width: min(520px, 92vw);
       background: rgba(255,255,255,0.10);
       border: 1px solid rgba(255,255,255,0.25);
-      border-radius: 16px;
-      padding: 22px 18px;
-      text-align: center;
-      color: #fff;
+      border-radius: 16px; padding: 22px 18px; text-align: center; color: #fff;
       backdrop-filter: blur(6px);
     }
-    #sendOverlay .sendTitle{
-      font-size: 1.6rem;
-      font-weight: 800;
-      margin-top: 14px;
-    }
-    #sendOverlay .sendNote{
-      font-size: 1.05rem;
-      opacity: 0.95;
-      margin-top: 6px;
-      line-height: 1.4;
-    }
+    #sendOverlay .sendTitle{ font-size: 1.6rem; font-weight: 800; margin-top: 14px; }
+    #sendOverlay .sendNote{ font-size: 1.05rem; opacity: 0.95; margin-top: 6px; line-height: 1.4; }
     #sendOverlay .sendSpinner{
-      width: 56px;
-      height: 56px;
-      border-radius: 50%;
+      width: 56px; height: 56px; border-radius: 50%;
       border: 6px solid rgba(255,255,255,0.25);
       border-top-color: rgba(255,255,255,0.95);
-      margin: 0 auto;
-      animation: spin 0.9s linear infinite;
+      margin: 0 auto; animation: spin 0.9s linear infinite;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
   </style>
@@ -151,14 +83,10 @@
   <div class="container">
     <h4 class="center-align">体力測定記録</h4>
 
-    <!-- ★ action はあなたのWebアプリURLのまま -->
-    <form
-      action="https://script.google.com/macros/s/AKfycbxUN4MeIE2IflPZ2JeYPHQgwW2sV1DAoem75_7aqZ-4xMmkq7MgYliHGDl9SFo0nkSH/exec"
-      method="POST"
-      target="dummyFrame"
-      novalidate
-    >
-      <div class="input-field"><input type="text" name="氏名" required autocomplete="off"><label>氏名</label></div>
+    <form action="https://script.google.com/macros/s/AKfycbyfI3_Nsb_ndSQMm1O1Jvn4mOgH24enRrUhIOv-VVeNnTDVnVyk2Nbo13PM__IKFlcW/exec"
+          method="POST" target="dummyFrame">
+
+      <div class="input-field"><input type="text" name="氏名" required><label>氏名</label></div>
       <div class="input-field"><input type="date" name="実施日" required><label class="active">実施日</label></div>
 
       <div class="input-field"><input type="number" name="身長" step="0.1"><label>身長（cm）</label></div>
@@ -172,15 +100,281 @@
         <label for="右片足立ち">右片足立ち（秒）</label>
         <button class="stopwatch-btn" type="button" data-target="右片足立ち">⏱️</button>
       </div>
+
       <div class="input-field stopwatch-field">
         <input type="number" name="左片足立ち" id="左片足立ち" step="0.01">
         <label for="左片足立ち">左片足立ち（秒）</label>
         <button class="stopwatch-btn" type="button" data-target="左片足立ち">⏱️</button>
       </div>
+
       <div class="input-field stopwatch-field">
         <input type="number" name="TUG1回目" id="TUG1回目" step="0.01">
         <label for="TUG1回目">TUG1回目（秒）</label>
         <button class="stopwatch-btn" type="button" data-target="TUG1回目">⏱️</button>
       </div>
+
       <div class="input-field stopwatch-field">
         <input type="number" name="TUG2回目" id="TUG2回目" step="0.01">
+        <label for="TUG2回目">TUG2回目（秒）</label>
+        <button class="stopwatch-btn" type="button" data-target="TUG2回目">⏱️</button>
+      </div>
+
+      <div class="input-field stopwatch-field">
+        <input type="number" name="10ｍ" id="10ｍ" step="0.01">
+        <label for="10ｍ">10ｍタイム（秒）</label>
+        <button class="stopwatch-btn" type="button" data-target="10ｍ">⏱️</button>
+      </div>
+
+      <div class="input-field"><input type="number" name="歩数"><label>歩数</label></div>
+      <div class="input-field"><input type="text" name="備考"><label>備考</label></div>
+
+      <!-- 歩行条件 -->
+      <div class="input-field" style="margin-top: 20px;">
+        <select name="歩行条件" id="歩行条件" required class="browser-default">
+          <option value="" disabled selected>歩行条件を選択</option>
+          <option value="自立">自立</option>
+          <option value="自立T字杖">自立T字杖</option>
+          <option value="自立4点杖">自立4点杖</option>
+          <option value="自立歩行器">自立歩行器</option>
+          <option value="自立カート">自立カート</option>
+          <option value="歩行種目実施なし">歩行種目実施なし</option>
+          <option value="その他">その他（手入力）</option>
+        </select>
+      </div>
+
+      <div class="input-field" id="walkOtherWrap" style="display:none; margin-top: 10px;">
+        <input type="text" id="walkOther" placeholder="例：トレッキングポール、ロフストランドクラッチ、松葉杖 など">
+        <label for="walkOther">歩行条件（その他）</label>
+      </div>
+
+      <button id="submitBtn" class="btn waves-effect waves-light" type="submit">送信</button>
+    </form>
+
+    <audio id="Audio" src="btn.mp3"></audio>
+    <iframe name="dummyFrame" style="display:none;"></iframe>
+  </div>
+
+  <!-- ストップウォッチモーダル -->
+  <div id="stopwatchModal">
+    <div id="timerDisplay" style="font-size: 4rem; margin-bottom: 30px;">0.00</div>
+    <button id="stopBtn" style="
+      font-size: 1.5rem; padding: 1rem 2rem;
+      background: #ff5252; color: white; border: none;
+      border-radius: 8px; cursor: pointer;
+    ">停止</button>
+  </div>
+
+  <!-- 送信中オーバーレイ -->
+  <div id="sendOverlay">
+    <div class="sendBox">
+      <div class="sendSpinner"></div>
+      <div class="sendTitle">送信中…</div>
+      <div class="sendNote">完了するまで画面を閉じないでください</div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+  <script>
+    // SW登録
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("./sw.js").catch(() => {});
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+      M.updateTextFields();
+      try { M.FormSelect.init(document.querySelectorAll('select')); } catch(e){}
+
+      // ===== ストップウォッチ =====
+      const stopwatchButtons = document.querySelectorAll('.stopwatch-btn');
+      const modal = document.getElementById("stopwatchModal");
+      const timerDisplay = document.getElementById("timerDisplay");
+      const controlBtn = document.getElementById("stopBtn");
+
+      let currentInputField = null;
+      let modalStartTime = null;
+      let modalTimerInterval = null;
+      let running = false;
+
+      stopwatchButtons.forEach(btn => {
+        btn.addEventListener("click", () => {
+          if (modal.style.display === "flex") return;
+          const inputId = btn.dataset.target;
+          currentInputField = document.getElementById(inputId);
+
+          timerDisplay.textContent = "0.00";
+          controlBtn.textContent = "スタート";
+          controlBtn.style.background = "#4CAF50";
+          controlBtn.disabled = false;
+          running = false;
+
+          modal.style.display = "flex";
+        });
+      });
+
+      controlBtn.addEventListener("click", () => {
+        if (!running) {
+          modalStartTime = Date.now();
+          running = true;
+          controlBtn.textContent = "ストップ";
+          controlBtn.style.background = "#ff3b3b";
+          modalTimerInterval = setInterval(() => {
+            const elapsed = ((Date.now() - modalStartTime) / 1000).toFixed(2);
+            timerDisplay.textContent = elapsed;
+          }, 100);
+        } else {
+          clearInterval(modalTimerInterval);
+          running = false;
+          const elapsed = (Date.now() - modalStartTime) / 1000;
+          if (currentInputField) {
+            const is片足 = currentInputField.id === "右片足立ち" || currentInputField.id === "左片足立ち";
+            const value = is片足 ? Math.min(elapsed, 60.0) : elapsed;
+            currentInputField.value = value.toFixed(2);
+          }
+          modal.style.display = "none";
+          M.updateTextFields();
+        }
+      });
+
+      // ===== 歩行条件：その他 =====
+      const walkSelect = document.getElementById("歩行条件");
+      const walkOtherWrap = document.getElementById("walkOtherWrap");
+      const walkOtherInput = document.getElementById("walkOther");
+
+      function updateWalkOtherVisibility() {
+        const isOther = walkSelect.value === "その他";
+        walkOtherWrap.style.display = isOther ? "block" : "none";
+        if (!isOther) walkOtherInput.value = "";
+        else setTimeout(() => walkOtherInput.focus(), 0);
+        M.updateTextFields();
+      }
+      walkSelect.addEventListener("change", updateWalkOtherVisibility);
+      updateWalkOtherVisibility();
+
+      // ===== 送信（送信中表示＋途中離脱警告＋真の成功判定）=====
+      const audio = document.getElementById("Audio");
+      const form  = document.querySelector('form');
+      const btn   = document.getElementById("submitBtn");
+      const dummyFrame = document.querySelector('iframe[name="dummyFrame"]');
+      const sendOverlay = document.getElementById("sendOverlay");
+
+      let 送信中 = false;
+      let 確定済 = false;
+      let timeoutId = null;
+
+      function showSending(){
+        sendOverlay.style.display = "flex";
+        btn.disabled = true;
+        btn.textContent = "送信中…";
+      }
+      function hideSending(){
+        sendOverlay.style.display = "none";
+        btn.disabled = false;
+        btn.textContent = "送信";
+      }
+      function beforeUnloadHandler(e){
+        if (!送信中) return;
+        e.preventDefault();
+        e.returnValue = "送信中です。完了するまで画面を閉じないでください。";
+        return e.returnValue;
+      }
+
+      function cleanupTempOption(){
+        const tempOpt = walkSelect.querySelector('option[data-temp="1"]');
+        if (tempOpt) tempOpt.remove();
+      }
+
+      function finalize(ok, message){
+        if (確定済) return;
+        確定済 = true;
+
+        clearTimeout(timeoutId);
+        window.removeEventListener("beforeunload", beforeUnloadHandler);
+
+        送信中 = false;
+        hideSending();
+
+        if (ok) {
+          form.reset();
+          cleanupTempOption();
+          walkOtherInput.value = "";
+          walkOtherWrap.style.display = "none";
+          M.updateTextFields();
+          try { M.FormSelect.init(document.querySelectorAll('select')); } catch(e){}
+          alert("Googleスプレッドシートに送信しました。");
+        } else {
+          alert("送信に失敗しました。\n" + (message || "不明なエラー"));
+        }
+      }
+
+      // ★Apps Script(doPost)が postMessage を返す前提
+      window.addEventListener("message", (ev) => {
+        const d = ev.data;
+        if (!d || d.type !== "tairyoku") return;
+        finalize(!!d.ok, d.message || "");
+      });
+
+      form.addEventListener("submit", function (event) {
+        確定済 = false;
+
+        if (!navigator.onLine) {
+          event.preventDefault();
+          alert("インターネットに接続されていないため送信できません。Wi-Fi等を確認してください。");
+          return;
+        }
+
+        // 必須のネイティブ検証（iOS対策でreportValidity）
+        if (!form.checkValidity()) {
+          event.preventDefault();
+          if (form.reportValidity) form.reportValidity();
+          else alert("未入力の必須項目があります。");
+          return;
+        }
+
+        if (walkSelect.value === "その他") {
+          const other = walkOtherInput.value.trim();
+          if (!other) {
+            event.preventDefault();
+            alert("歩行条件で「その他」を選んだ場合は、内容を入力してください。");
+            walkOtherInput.focus();
+            return;
+          }
+          let tempOpt = walkSelect.querySelector('option[data-temp="1"]');
+          if (!tempOpt) {
+            tempOpt = document.createElement("option");
+            tempOpt.dataset.temp = "1";
+            walkSelect.appendChild(tempOpt);
+          }
+          tempOpt.value = other;
+          tempOpt.textContent = other;
+          walkSelect.value = other;
+        }
+
+        送信中 = true;
+        window.addEventListener("beforeunload", beforeUnloadHandler);
+
+        showSending();
+        audio.currentTime = 0;
+        audio.play().catch(() => {});
+
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => {
+          if (!送信中 || 確定済) return;
+          alert("送信に時間がかかっています。完了表示が出るまで、この画面を閉じないでください。");
+        }, 12000);
+      });
+
+      // iframe load は「応答が返った」だけ（成功確定は postMessage のみ）
+      dummyFrame.addEventListener("load", function () {
+        if (!送信中 || 確定済) return;
+        // postMessage が来ない＝サーバ側が旧版/権限ページ/例外HTMLの可能性
+        setTimeout(() => {
+          if (!送信中 || 確定済) return;
+          finalize(false, "サーバーの成功確認ができませんでした。Apps Script(doPost)が postMessage を返す版か、実行ログを確認してください。");
+        }, 700);
+      });
+    });
+  </script>
+</body>
+</html>
