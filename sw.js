@@ -1,27 +1,19 @@
-/* sw.js - 体力測定記録 PWA */
-const VERSION = "v6";
-const PRECACHE = `tairyoku-precache-${VERSION}`;
-const RUNTIME  = `tairyoku-runtime-${VERSION}`;
+const VERSION = "v7"; // ★更新したらここを必ず増やす
+const CACHE_NAME = `tairyoku-cache-${VERSION}`;
 
-// ※存在するファイルだけにしてください（btn.mp3 が無いなら削除）
 const PRECACHE_URLS = [
   "./",
   "./index.html",
   "./manifest.json",
   "./icon-192.png",
   "./icon-512.png",
-  "./btn.mp3"
+  "./btn.mp3" // 無いなら削除してください
 ];
 
 self.addEventListener("install", (event) => {
   event.waitUntil((async () => {
-    const cache = await caches.open(PRECACHE);
-
-    // addAll は 1つでも失敗すると落ちるので、個別で握り潰し
-    await Promise.allSettled(
-      PRECACHE_URLS.map((url) => cache.add(url))
-    );
-
+    const cache = await caches.open(CACHE_NAME);
+    await Promise.allSettled(PRECACHE_URLS.map((u) => cache.add(u)));
     await self.skipWaiting();
   })());
 });
@@ -29,11 +21,7 @@ self.addEventListener("install", (event) => {
 self.addEventListener("activate", (event) => {
   event.waitUntil((async () => {
     const keys = await caches.keys();
-    await Promise.all(
-      keys.map((key) => {
-        if (key !== PRECACHE && key !== RUNTIME) return caches.delete(key);
-      })
-    );
+    await Promise.all(keys.map((k) => (k !== CACHE_NAME ? caches.delete(k) : null)));
     await self.clients.claim();
   })());
 });
@@ -41,52 +29,39 @@ self.addEventListener("activate", (event) => {
 self.addEventListener("fetch", (event) => {
   const req = event.request;
 
-  // フォーム送信などの非GETは触らない
+  // POST（フォーム送信）はSWが触らない
   if (req.method !== "GET") return;
 
-  const url = new URL(req.url);
-
-  // ナビゲーション（ページ遷移）は index.html にフォールバック
+  // ナビゲーション（index.html）はネット優先（更新反映を最優先）
   if (req.mode === "navigate") {
     event.respondWith((async () => {
-      const cache = await caches.open(PRECACHE);
-      const cached = await cache.match("./index.html");
       try {
         const fresh = await fetch(req);
+        const cache = await caches.open(CACHE_NAME);
+        cache.put("./index.html", fresh.clone());
         return fresh;
       } catch (_) {
+        const cached = await caches.match("./index.html");
         return cached || Response.error();
       }
     })());
     return;
   }
 
-  // それ以外は Stale-While-Revalidate（キャッシュ優先＋裏で更新）
+  // その他はキャッシュ優先
   event.respondWith((async () => {
-    const cache = await caches.open(RUNTIME);
-
     const cached = await caches.match(req);
-    const fetchPromise = (async () => {
-      try {
-        const res = await fetch(req);
-        // 成功レスポンスだけ保存（opaque も保存可）
-        if (res && (res.status === 200 || res.type === "opaque")) {
-          cache.put(req, res.clone());
-        }
-        return res;
-      } catch (_) {
-        return null;
+    if (cached) return cached;
+
+    try {
+      const fresh = await fetch(req);
+      const cache = await caches.open(CACHE_NAME);
+      if (fresh && (fresh.status === 200 || fresh.type === "opaque")) {
+        cache.put(req, fresh.clone());
       }
-    })();
-
-    // まずキャッシュがあれば返す、無ければネットを待つ
-    if (cached) {
-      // 背景更新
-      fetchPromise;
-      return cached;
+      return fresh;
+    } catch (_) {
+      return Response.error();
     }
-
-    const fresh = await fetchPromise;
-    return fresh || Response.error();
   })());
 });
