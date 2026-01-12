@@ -1,4 +1,4 @@
-const VERSION = "v9"; // ★更新したらここを必ず増やす
+const VERSION = "v10"; // ★更新したらここを必ず増やす
 const CACHE_NAME = `tairyoku-cache-${VERSION}`;
 
 const PRECACHE_URLS = [
