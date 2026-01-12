@@ -20,7 +20,7 @@
     body { font-family: 'Noto Sans JP', sans-serif; background-color: #f5f5f5; }
     .container {
       max-width: 600px; margin-top: 40px; padding: 30px; background: #fff;
-      border-radius: 12px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
     }
     h4 { margin-bottom: 30px; font-size: 2.4rem; }
     .input-field label { font-size: 1.2rem; }
@@ -35,7 +35,7 @@
 
     #stopwatchModal {
       display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0, 0, 0, 0.9); z-index: 9999;
+      background: rgba(0,0,0,0.9); z-index: 9999;
       justify-content: center; align-items: center; flex-direction: column;
       color: #fff; font-family: 'Noto Sans JP', sans-serif;
     }
@@ -49,7 +49,6 @@
       box-shadow: 0 4px 10px rgba(0,0,0,0.4); transition: background 0.3s;
     }
     #stopBtn:hover { background: #ff0000; }
-
     @media (max-width: 600px) {
       #timerDisplay { font-size: 6rem !important; }
       #stopBtn { font-size: 2.5rem !important; padding: 1.5rem 2.5rem !important; }
@@ -83,9 +82,11 @@
   <div class="container">
     <h4 class="center-align">体力測定記録</h4>
 
-    <form action="https://script.google.com/macros/s/AKfycbxkS4NjniooY7g2sKa3k_b-Lm1Yw4sec6COkveAJqxlEPx1vieze60qqYpII32J7Ee1/exec"
-          method="POST" target="dummyFrame">
-
+    <form
+      action="https://script.google.com/macros/s/AKfycbwnlrQKREnhuKzonKwa8ODC5aaW43Tx8B8okfAAQMaGTnkRGhqM0u0Dbeexk_lZBsda/exec"
+      method="POST"
+      target="dummyFrame"
+    >
       <div class="input-field"><input type="text" name="氏名" required><label>氏名</label></div>
       <div class="input-field"><input type="date" name="実施日" required><label class="active">実施日</label></div>
 
@@ -94,31 +95,27 @@
       <div class="input-field"><input type="number" name="右握力" step="0.1"><label>右握力（kg）</label></div>
       <div class="input-field"><input type="number" name="左握力" step="0.1"><label>左握力（kg）</label></div>
 
-      <!-- ストップウォッチ対応項目 -->
+      <!-- ストップウォッチ -->
       <div class="input-field stopwatch-field">
         <input type="number" name="右片足立ち" id="右片足立ち" step="0.01">
         <label for="右片足立ち">右片足立ち（秒）</label>
         <button class="stopwatch-btn" type="button" data-target="右片足立ち">⏱️</button>
       </div>
-
       <div class="input-field stopwatch-field">
         <input type="number" name="左片足立ち" id="左片足立ち" step="0.01">
         <label for="左片足立ち">左片足立ち（秒）</label>
         <button class="stopwatch-btn" type="button" data-target="左片足立ち">⏱️</button>
       </div>
-
       <div class="input-field stopwatch-field">
         <input type="number" name="TUG1回目" id="TUG1回目" step="0.01">
         <label for="TUG1回目">TUG1回目（秒）</label>
         <button class="stopwatch-btn" type="button" data-target="TUG1回目">⏱️</button>
       </div>
-
       <div class="input-field stopwatch-field">
         <input type="number" name="TUG2回目" id="TUG2回目" step="0.01">
         <label for="TUG2回目">TUG2回目（秒）</label>
         <button class="stopwatch-btn" type="button" data-target="TUG2回目">⏱️</button>
       </div>
-
       <div class="input-field stopwatch-field">
         <input type="number" name="10ｍ" id="10ｍ" step="0.01">
         <label for="10ｍ">10ｍタイム（秒）</label>
@@ -150,6 +147,7 @@
       <button id="submitBtn" class="btn waves-effect waves-light" type="submit">送信</button>
     </form>
 
+    <!-- btn.mp3 が無くても動く（404警告は出ます。必要ならファイルを置く） -->
     <audio id="Audio" src="btn.mp3"></audio>
     <iframe name="dummyFrame" style="display:none;"></iframe>
   </div>
@@ -175,13 +173,6 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
   <script>
-    // SW登録
-    if ("serviceWorker" in navigator) {
-      window.addEventListener("load", () => {
-        navigator.serviceWorker.register("./sw.js").catch(() => {});
-      });
-    }
-
     document.addEventListener('DOMContentLoaded', function () {
       M.updateTextFields();
       try { M.FormSelect.init(document.querySelectorAll('select')); } catch(e){}
@@ -226,12 +217,14 @@
         } else {
           clearInterval(modalTimerInterval);
           running = false;
+
           const elapsed = (Date.now() - modalStartTime) / 1000;
           if (currentInputField) {
             const is片足 = currentInputField.id === "右片足立ち" || currentInputField.id === "左片足立ち";
             const value = is片足 ? Math.min(elapsed, 60.0) : elapsed;
             currentInputField.value = value.toFixed(2);
           }
+
           modal.style.display = "none";
           M.updateTextFields();
         }
@@ -258,11 +251,11 @@
       const btn   = document.getElementById("submitBtn");
       const dummyFrame = document.querySelector('iframe[name="dummyFrame"]');
       const sendOverlay = document.getElementById("sendOverlay");
-      
+
       let 送信中 = false;
       let 確定済 = false;
       let timeoutId = null;
-      
+
       function showSending(){
         sendOverlay.style.display = "flex";
         btn.disabled = true;
@@ -279,22 +272,22 @@
         e.returnValue = "送信中です。完了するまで画面を閉じないでください。";
         return e.returnValue;
       }
-      
+
       function cleanupTempOption(){
         const tempOpt = walkSelect.querySelector('option[data-temp="1"]');
         if (tempOpt) tempOpt.remove();
       }
-      
+
       function finalize(ok, message){
         if (確定済) return;
         確定済 = true;
-      
+
         clearTimeout(timeoutId);
         window.removeEventListener("beforeunload", beforeUnloadHandler);
-      
+
         送信中 = false;
         hideSending();
-      
+
         if (ok) {
           form.reset();
           cleanupTempOption();
@@ -307,33 +300,30 @@
           alert("送信に失敗しました。\n" + (message || "不明なエラー"));
         }
       }
-      
-      // ★Apps Script(doPost)が postMessage を返す前提
+
+      // ★Apps Script(doPost)の postMessage を受けて確定（originは絞らない）
       window.addEventListener("message", (ev) => {
         const d = ev.data;
-        // デバッグしたい場合は一時的にこれを有効化：
-        // console.log("message received:", ev.origin, d);
-      
         if (!d || d.type !== "tairyoku") return;
         finalize(!!d.ok, d.message || "");
       });
-      
+
       form.addEventListener("submit", function (event) {
         確定済 = false;
-      
+
         if (!navigator.onLine) {
           event.preventDefault();
           alert("インターネットに接続されていないため送信できません。Wi-Fi等を確認してください。");
           return;
         }
-      
+
         if (!form.checkValidity()) {
           event.preventDefault();
           if (form.reportValidity) form.reportValidity();
           else alert("未入力の必須項目があります。");
           return;
         }
-      
+
         if (walkSelect.value === "その他") {
           const other = walkOtherInput.value.trim();
           if (!other) {
@@ -352,34 +342,30 @@
           tempOpt.textContent = other;
           walkSelect.value = other;
         }
-      
-        // iframe を一度クリア（古い状態の影響を減らす）
+
+        // iframe状態を一度クリア（古いloadの影響を減らす）
         try { dummyFrame.src = "about:blank"; } catch(e){}
-      
+
         送信中 = true;
         window.addEventListener("beforeunload", beforeUnloadHandler);
-      
+
         showSending();
         audio.currentTime = 0;
         audio.play().catch(() => {});
-      
-        // ★失敗確定はここだけ（postMessage が来なければタイムアウト）
+
+        // ★失敗確定はタイムアウトのみ（loadでは確定しない）
         clearTimeout(timeoutId);
         timeoutId = setTimeout(() => {
           if (!送信中 || 確定済) return;
-          finalize(false, "サーバーから成功通知が返りませんでした。Apps Script(doPost)のデプロイ設定（全員アクセス可）と postMessage 返却を確認してください。");
-        }, 20000); // 20秒（必要なら30秒に）
-      });
-      
-      // ★ load は「何かが読み込まれた」だけなので、ここでは失敗確定しない
-      dummyFrame.addEventListener("load", function () {
-        if (!送信中 || 確定済) return;
-        // ここで何もしない（重要）
+          finalize(false, "サーバーから成功通知が返りませんでした。Apps Scriptのデプロイ設定（全員アクセス可）と実行ログを確認してください。");
+        }, 20000);
       });
 
+      // loadは確定しない（重要）
+      dummyFrame.addEventListener("load", function () {
+        // 何もしない
+      });
+    });
   </script>
 </body>
 </html>
-
-
-
