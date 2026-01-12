@@ -258,11 +258,11 @@
       const btn   = document.getElementById("submitBtn");
       const dummyFrame = document.querySelector('iframe[name="dummyFrame"]');
       const sendOverlay = document.getElementById("sendOverlay");
-
+      
       let 送信中 = false;
       let 確定済 = false;
       let timeoutId = null;
-
+      
       function showSending(){
         sendOverlay.style.display = "flex";
         btn.disabled = true;
@@ -279,22 +279,22 @@
         e.returnValue = "送信中です。完了するまで画面を閉じないでください。";
         return e.returnValue;
       }
-
+      
       function cleanupTempOption(){
         const tempOpt = walkSelect.querySelector('option[data-temp="1"]');
         if (tempOpt) tempOpt.remove();
       }
-
+      
       function finalize(ok, message){
         if (確定済) return;
         確定済 = true;
-
+      
         clearTimeout(timeoutId);
         window.removeEventListener("beforeunload", beforeUnloadHandler);
-
+      
         送信中 = false;
         hideSending();
-
+      
         if (ok) {
           form.reset();
           cleanupTempOption();
@@ -307,31 +307,33 @@
           alert("送信に失敗しました。\n" + (message || "不明なエラー"));
         }
       }
-
+      
       // ★Apps Script(doPost)が postMessage を返す前提
       window.addEventListener("message", (ev) => {
         const d = ev.data;
+        // デバッグしたい場合は一時的にこれを有効化：
+        // console.log("message received:", ev.origin, d);
+      
         if (!d || d.type !== "tairyoku") return;
         finalize(!!d.ok, d.message || "");
       });
-
+      
       form.addEventListener("submit", function (event) {
         確定済 = false;
-
+      
         if (!navigator.onLine) {
           event.preventDefault();
           alert("インターネットに接続されていないため送信できません。Wi-Fi等を確認してください。");
           return;
         }
-
-        // 必須のネイティブ検証（iOS対策でreportValidity）
+      
         if (!form.checkValidity()) {
           event.preventDefault();
           if (form.reportValidity) form.reportValidity();
           else alert("未入力の必須項目があります。");
           return;
         }
-
+      
         if (walkSelect.value === "その他") {
           const other = walkOtherInput.value.trim();
           if (!other) {
@@ -350,33 +352,34 @@
           tempOpt.textContent = other;
           walkSelect.value = other;
         }
-
+      
+        // iframe を一度クリア（古い状態の影響を減らす）
+        try { dummyFrame.src = "about:blank"; } catch(e){}
+      
         送信中 = true;
         window.addEventListener("beforeunload", beforeUnloadHandler);
-
+      
         showSending();
         audio.currentTime = 0;
         audio.play().catch(() => {});
-
+      
+        // ★失敗確定はここだけ（postMessage が来なければタイムアウト）
         clearTimeout(timeoutId);
         timeoutId = setTimeout(() => {
           if (!送信中 || 確定済) return;
-          alert("送信に時間がかかっています。完了表示が出るまで、この画面を閉じないでください。");
-        }, 12000);
+          finalize(false, "サーバーから成功通知が返りませんでした。Apps Script(doPost)のデプロイ設定（全員アクセス可）と postMessage 返却を確認してください。");
+        }, 20000); // 20秒（必要なら30秒に）
       });
-
-      // iframe load は「応答が返った」だけ（成功確定は postMessage のみ）
+      
+      // ★ load は「何かが読み込まれた」だけなので、ここでは失敗確定しない
       dummyFrame.addEventListener("load", function () {
         if (!送信中 || 確定済) return;
-        // postMessage が来ない＝サーバ側が旧版/権限ページ/例外HTMLの可能性
-        setTimeout(() => {
-          if (!送信中 || 確定済) return;
-          finalize(false, "サーバーの成功確認ができませんでした。Apps Script(doPost)が postMessage を返す版か、実行ログを確認してください。");
-        }, 700);
+        // ここで何もしない（重要）
       });
-    });
+
   </script>
 </body>
 </html>
+
 
 
