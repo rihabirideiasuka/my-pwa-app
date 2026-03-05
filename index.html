@@ -358,7 +358,7 @@
         timeoutId = setTimeout(() => {
           if (!送信中 || 確定済) return;
           finalize(false, "サーバーから成功通知が返りませんでした。Apps Scriptのデプロイ設定（全員アクセス可）と実行ログを確認してください。");
-        }, 20000);
+        }, 60000);
       });
 
       // loadは確定しない（重要）
@@ -369,4 +369,5 @@
   </script>
 </body>
 </html>
+
 
